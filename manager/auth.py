@@ -13,3 +13,12 @@ def set_master_password(password: str) -> None:
     hashed = hash_password(password)
     with open(MASTER_FILE, "w") as f:
         f.write(hashed)
+
+def verify_master_password(password: str) -> bool:
+    if not master_exists():
+        return False
+
+    with open(MASTER_FILE, "r") as f:
+        stored_hash = f.read()
+
+    return hash_password(password) == stored_hash
