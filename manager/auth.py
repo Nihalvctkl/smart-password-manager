@@ -22,3 +22,13 @@ def verify_master_password(password: str) -> bool:
         stored_hash = f.read()
 
     return hash_password(password) == stored_hash
+
+def reset_master_password(old_password: str, new_password: str) -> bool | None:
+    if not verify_master_password(old_password):
+        return False
+
+    if old_password == new_password:
+        return None
+
+    set_master_password(new_password)
+    return True
