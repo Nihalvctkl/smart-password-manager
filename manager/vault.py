@@ -1,11 +1,10 @@
-from typing import List, Dict
-from manager.storage import load_vault, save_vault
 from manager.crypto import encrypt, decrypt
+from manager.storage import load_vault, save_vault
 
 class Vault:
-    def __init__(self, key: bytes):
+    def __init__(self, key: str):
         self._key = key
-        self._credentials: List[Dict[str, str]] = load_vault()
+        self._credentials = load_vault()
 
     def add_entry(self, site: str, username: str, password: str) -> None:
         encrypted_password = encrypt(password, self._key)
@@ -19,10 +18,7 @@ class Vault:
         self._credentials.append(entry)
         save_vault(self._credentials)
 
-    def get_entries(self) -> List[Dict[str, str]]:
-        """
-        Return decrypted credentials (in memory only)
-        """
+    def get_entries(self):
         decrypted_entries = []
 
         for entry in self._credentials:
@@ -34,10 +30,12 @@ class Vault:
 
         return decrypted_entries
 
-    def delete_entry(self, site: str) -> bool:
-        for entry in self._credentials:
-            if entry["site"] == site:
-                self._credentials.remove(entry)
-                save_vault(self._credentials)
-                return True
+    def delete_entry_by_index(self, index: int) -> bool:
+        """
+        Delete credential by index (0-based).
+        """
+        if 0 <= index < len(self._credentials):
+            self._credentials.pop(index)
+            save_vault(self._credentials)
+            return True
         return False

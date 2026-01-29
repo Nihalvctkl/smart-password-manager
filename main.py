@@ -32,7 +32,8 @@ def main():
         print("1. Add new credential")
         print("2. View stored credentials")
         print("3. Generate strong password")
-        print("4. Exit")
+        print("4. Delete credential")
+        print("5. Exit")
 
         choice = input("Choose an option: ")
 
@@ -49,8 +50,8 @@ def main():
             if not entries:
                 print("No credentials stored.")
             else:
-                for entry in entries:
-                    print(f"- {entry['site']} | {entry['username']} | {entry['password']}")
+                for i, entry in enumerate(entries, start=1):
+                    print(f"{i}. {entry['site']} | {entry['username']} | {entry['password']}")
 
         elif choice == "3":
             length = input("Password length (default 12): ")
@@ -67,6 +68,32 @@ def main():
                 print("Generated password saved 🔐")
 
         elif choice == "4":
+            entries = vault.get_entries()
+            if not entries:
+                print("No credentials to delete.")
+                continue
+
+            for i, entry in enumerate(entries, start=1):
+                print(f"{i}. {entry['site']} | {entry['username']}")
+
+            choice_num = input("Enter number to delete: ")
+
+            if not choice_num.isdigit():
+                print("Invalid input ❌")
+                continue
+
+            index = int(choice_num) - 1
+            confirm = input("Are you sure? (y/n): ").lower()
+
+            if confirm == "y":
+                if vault.delete_entry_by_index(index):
+                    print("Credential deleted ✅")
+                else:
+                    print("Invalid number ❌")
+            else:
+                print("Deletion cancelled.")
+
+        elif choice == "5":
             print("Goodbye 👋")
             break
 
