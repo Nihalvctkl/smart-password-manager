@@ -1,7 +1,8 @@
-import hashlib
 import os
+import hashlib
 
-MASTER_FILE = "master.key"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MASTER_FILE = os.path.join(BASE_DIR, "master.key")
 
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
