@@ -5,6 +5,7 @@ from manager.auth import (
 )
 from manager.crypto import derive_key
 from manager.vault import Vault
+from manager.generator import generate_password
 
 def main():
     print("=== Smart Password Manager ===")
@@ -30,7 +31,8 @@ def main():
         print("\nMenu:")
         print("1. Add new credential")
         print("2. View stored credentials")
-        print("3. Exit")
+        print("3. Generate strong password")
+        print("4. Exit")
 
         choice = input("Choose an option: ")
 
@@ -51,6 +53,20 @@ def main():
                     print(f"- {entry['site']} | {entry['username']} | {entry['password']}")
 
         elif choice == "3":
+            length = input("Password length (default 12): ")
+            length = int(length) if length.isdigit() else 12
+
+            generated = generate_password(length)
+            print(f"Generated password: {generated}")
+
+            save = input("Save this password? (y/n): ").lower()
+            if save == "y":
+                site = input("Site: ")
+                username = input("Username: ")
+                vault.add_entry(site, username, generated)
+                print("Generated password saved 🔐")
+
+        elif choice == "4":
             print("Goodbye 👋")
             break
 
