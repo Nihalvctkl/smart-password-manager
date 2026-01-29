@@ -26,13 +26,36 @@ def main():
     key = derive_key(password)
     vault = Vault(key)
 
-    print("\nAdd new credential")
-    site = input("Site: ")
-    username = input("Username: ")
-    secret = input("Password: ")
+    while True:
+        print("\nMenu:")
+        print("1. Add new credential")
+        print("2. View stored credentials")
+        print("3. Exit")
 
-    vault.add_entry(site, username, secret)
-    print("Credential stored securely 🔐")
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            site = input("Site: ")
+            username = input("Username: ")
+            secret = input("Password: ")
+
+            vault.add_entry(site, username, secret)
+            print("Credential stored securely 🔐")
+
+        elif choice == "2":
+            entries = vault.get_entries()
+            if not entries:
+                print("No credentials stored.")
+            else:
+                for entry in entries:
+                    print(f"- {entry['site']} | {entry['username']} | {entry['password']}")
+
+        elif choice == "3":
+            print("Goodbye 👋")
+            break
+
+        else:
+            print("Invalid option. Try again.")
 
 if __name__ == "__main__":
     main()
