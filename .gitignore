@@ -3,3 +3,4 @@ manager/__pycache__/__init__.cpython-315.pyc
 manager/__pycache__/auth.cpython-315.pyc
 manager/__pycache__/vault.cpython-315.pyc
 manager/__pycache__/storage.cpython-315.pyc
+manager/__pycache__/crypto.cpython-315.pyc

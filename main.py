@@ -3,6 +3,8 @@ from manager.auth import (
     set_master_password,
     verify_master_password
 )
+from manager.crypto import derive_key
+from manager.vault import Vault
 
 def main():
     print("=== Smart Password Manager ===")
@@ -15,10 +17,22 @@ def main():
 
     password = input("Enter master password: ")
 
-    if verify_master_password(password):
-        print("Access granted ")
-    else:
-        print("Access denied ")
+    if not verify_master_password(password):
+        print("Access denied ❌")
+        return
+
+    print("Access granted ✅")
+
+    key = derive_key(password)
+    vault = Vault(key)
+
+    print("\nAdd new credential")
+    site = input("Site: ")
+    username = input("Username: ")
+    secret = input("Password: ")
+
+    vault.add_entry(site, username, secret)
+    print("Credential stored securely 🔐")
 
 if __name__ == "__main__":
     main()
