@@ -7,16 +7,23 @@ from manager.crypto import derive_key
 from manager.vault import Vault
 from manager.generator import generate_password
 
+def non_empty(prompt: str) -> str:
+    while True:
+        value = input(prompt).strip()
+        if value:
+            return value
+        print("Input cannot be empty ❌")
+
 def main():
     print("=== Smart Password Manager ===")
 
     if not master_exists():
-        password = input("Set master password: ")
+        password = non_empty("Set master password: ")
         set_master_password(password)
-        print("Master password set successfully.")
+        print("Master password set successfully ✅")
         return
 
-    password = input("Enter master password: ")
+    password = non_empty("Enter master password: ")
 
     if not verify_master_password(password):
         print("Access denied ❌")
@@ -35,37 +42,42 @@ def main():
         print("4. Delete credential")
         print("5. Exit")
 
-        choice = input("Choose an option: ")
+        choice = input("Choose an option: ").strip()
 
         if choice == "1":
-            site = input("Site: ")
-            username = input("Username: ")
-            secret = input("Password: ")
+            site = non_empty("Site: ")
+            username = non_empty("Username: ")
+            secret = non_empty("Password: ")
 
-            vault.add_entry(site, username, secret)
-            print("Credential stored securely 🔐")
+            if vault.add_entry(site, username, secret):
+                print("Credential stored securely 🔐")
+            else:
+                print("A credential for this site already exists ❌")
 
         elif choice == "2":
             entries = vault.get_entries()
             if not entries:
                 print("No credentials stored.")
             else:
+                print("\nStored credentials:")
                 for i, entry in enumerate(entries, start=1):
                     print(f"{i}. {entry['site']} | {entry['username']} | {entry['password']}")
 
         elif choice == "3":
-            length = input("Password length (default 12): ")
-            length = int(length) if length.isdigit() else 12
+            length = input("Password length (default 12): ").strip()
+            length = int(length) if length.isdigit() and int(length) >= 6 else 12
 
             generated = generate_password(length)
             print(f"Generated password: {generated}")
 
             save = input("Save this password? (y/n): ").lower()
             if save == "y":
-                site = input("Site: ")
-                username = input("Username: ")
-                vault.add_entry(site, username, generated)
-                print("Generated password saved 🔐")
+                site = non_empty("Site: ")
+                username = non_empty("Username: ")
+                if vault.add_entry(site, username, generated):
+                    print("Generated password saved 🔐")
+                else:
+                    print("Site already exists ❌")
 
         elif choice == "4":
             entries = vault.get_entries()
@@ -76,8 +88,7 @@ def main():
             for i, entry in enumerate(entries, start=1):
                 print(f"{i}. {entry['site']} | {entry['username']}")
 
-            choice_num = input("Enter number to delete: ")
-
+            choice_num = input("Enter number to delete: ").strip()
             if not choice_num.isdigit():
                 print("Invalid input ❌")
                 continue
@@ -89,7 +100,7 @@ def main():
                 if vault.delete_entry_by_index(index):
                     print("Credential deleted ✅")
                 else:
-                    print("Invalid number ❌")
+                    print("Invalid selection ❌")
             else:
                 print("Deletion cancelled.")
 

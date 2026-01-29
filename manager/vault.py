@@ -6,7 +6,12 @@ class Vault:
         self._key = key
         self._credentials = load_vault()
 
-    def add_entry(self, site: str, username: str, password: str) -> None:
+    def add_entry(self, site: str, username: str, password: str) -> bool:
+        # Prevent duplicate sites
+        for entry in self._credentials:
+            if entry["site"] == site:
+                return False
+
         encrypted_password = encrypt(password, self._key)
 
         entry = {
@@ -17,6 +22,7 @@ class Vault:
 
         self._credentials.append(entry)
         save_vault(self._credentials)
+        return True
 
     def get_entries(self):
         decrypted_entries = []
@@ -31,9 +37,6 @@ class Vault:
         return decrypted_entries
 
     def delete_entry_by_index(self, index: int) -> bool:
-        """
-        Delete credential by index (0-based).
-        """
         if 0 <= index < len(self._credentials):
             self._credentials.pop(index)
             save_vault(self._credentials)
