@@ -33,7 +33,26 @@ All credentials are **encrypted at rest** using a key derived from the master pa
 
 ## 🧱 Project Structure
 
----
+smart-password-manager/
+│
+├── main.py # Entry point for CLI version
+├── gui.py # Entry point for GUI version (Tkinter)
+│
+├── manager/ # Core application logic
+│ ├── init.py
+│ ├── auth.py # Master password setup, verification & reset
+│ ├── crypto.py # Key derivation, encryption & decryption
+│ ├── vault.py # Credential management (add, view, delete)
+│ ├── generator.py # Strong password generator
+│ └── storage.py # Persistent storage handling (JSON)
+│
+├── data/ # Encrypted application data
+│ └── vault.json # Encrypted credentials (ignored by Git)
+│
+├── master.key # Hashed master password (ignored by Git)
+├── .gitignore # Ignores sensitive and generated files
+└── README.md # Project documentation
+
 
 ## 🚀 How to Run the Project
 
